@@ -4,8 +4,10 @@ from sys import platform
 if platform == 'darwin':
   module1 = Extension('iSFX',
                       include_dirs = ['../../FMOD/inc',
+                                      '/usr/local/include',
                                       '../C++'],
-                      libraries = ['../../FMOD/lib/' + platform + '/libfmodex.dylib'],
+                      libraries = ['fmodex'],
+                      library_dirs = ['../../FMOD/lib/darwin'],
                       sources = ['pyiSFX.cpp'])
 if platform == 'linux':
   module1 = Extension('iSFX',

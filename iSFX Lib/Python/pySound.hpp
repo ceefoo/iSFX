@@ -1,5 +1,6 @@
 #include <Python.h>
 //#include "structmember.h"
+#include <boost/bind.hpp>
 
 // iSFX C++ Header
 #include "iSFX.hpp"
@@ -13,6 +14,13 @@
 struct Sound {
     PyObject_HEAD
     iSFX::Sound* _sound;
+    PyObject* callback;
+    void pySignalPosition(long i) {
+      if (callback != NULL) {
+        PyObject *arglist = Py_BuildValue("(i)", i);
+        PyObject_CallObject(callback, arglist);
+      }
+    }
 };
 
 static void
@@ -45,6 +53,7 @@ Sound_init(Sound *self, PyObject *args, PyObject *kwds)
   if (!PyArg_ParseTuple(args, "Os", &system, &sound_path))
       return NULL;
   self->_sound = new iSFX::Sound(system->_system, sound_path);
+  self->_sound->song_position_update.connect(boost::bind(&Sound::pySignalPosition, self, _1));
 }
 
 
@@ -59,6 +68,16 @@ static PyObject * Sound_GetName(Sound* self) { return PyUnicode_FromString(self-
 static PyObject * Sound_MemoryUsed(Sound* self) { return PyLong_FromLong(self->_sound->MemoryUsed()); }
 static PyObject * Sound_TogglePaused(Sound* self) { self->_sound->TogglePaused(); Py_RETURN_NONE; }
 static PyObject * Sound_GetPCMData(Sound* self) { self->_sound->GetPCMData(); Py_RETURN_NONE; }
+static PyObject * Sound_SetPositionMs(Sound* self, PyObject *args, PyObject *keywds) {
+  long ms;
+  if (!PyArg_ParseTuple(args, "l", &ms)) {
+    PyErr_SetString(PyExc_TypeError, "parameter parse failed line:"+ __LINE__);
+    return NULL;
+  }
+  self->_sound->SetPositionMs(ms);
+  Py_RETURN_NONE;
+}
+
 static PyObject * Sound_Fade(Sound* self, PyObject *args, PyObject *keywds) {
   double dv;
   unsigned int dt;
@@ -86,6 +105,23 @@ static PyObject * Sound_Fade(Sound* self, PyObject *args, PyObject *keywds) {
   Py_RETURN_NONE;
 }
 
+static PyObject * Sound_SetPositionCallback(Sound* self, PyObject* args) {
+  PyObject* fun;
+  if (!PyArg_ParseTuple(args, "O", &fun)) {
+    PyErr_SetString(PyExc_TypeError, "parameter parse failed.");
+    return NULL;
+  }
+  if (!PyCallable_Check(fun)) {
+    PyErr_SetString(PyExc_TypeError, "parameter must be callable.");
+    return NULL;
+  }
+  
+  Py_XINCREF(fun);         /* Add a reference to new callback */
+  self->callback = fun;
+  
+  Py_RETURN_NONE;
+}
+
 static PyMethodDef Sound_methods[] = {
     {"play", (PyCFunction)Sound_Play, METH_NOARGS, "Plays a sound" }, 
     {"stop", (PyCFunction)Sound_Stop, METH_NOARGS, "Stops a sound" },
@@ -95,6 +131,8 @@ static PyMethodDef Sound_methods[] = {
     {"togglePaused", (PyCFunction)Sound_TogglePaused, METH_NOARGS, "Toggles pause/play" },
     {"fade", (PyCFunction)Sound_Fade, METH_VARARGS | METH_KEYWORDS, "Fades the sound" },
     {"getPCMData", (PyCFunction)Sound_GetPCMData, METH_NOARGS, "Get PCM Data" },
+    {"setPositionCallback", (PyCFunction)Sound_SetPositionCallback, METH_VARARGS, "Sets the change in position callback." },
+    {"setPositionMs", (PyCFunction)Sound_SetPositionMs, METH_VARARGS, "Sets the position in ms." },
     {NULL}  /* Sentinel */
 };
 

@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>images/play.png</file>
+    <file>qml/main.qml</file>
+    <file>qml/SimpleProgressBar.png</file>
+    <file>qml/SoundColumn.png</file>
+    <file>qml/StripedBar.png</file>
+    <file>qml/ImageButton.png</file>
+  </qresource>
+</RCC>

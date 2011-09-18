@@ -19,8 +19,8 @@ namespace iSFX {
     boost::signals2::signal<void(unsigned int)> update;
     
     System() {
-      checked(FMOD::System_Create(&system));
-      checked(system->init(32, FMOD_INIT_NORMAL, NULL));
+      checked(FMOD::System_Create(&system), __LINE__);
+      checked(system->init(32, FMOD_INIT_NORMAL, NULL), __LINE__);
     }
     
     void Update() {

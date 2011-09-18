@@ -6,9 +6,16 @@ namespace iSFX {
 
 struct Error {};
 
-inline void checked(FMOD_RESULT result) {
+inline void checked(FMOD_RESULT result, int line) {
   if (result != FMOD_OK) {
-    printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+    printf("FMOD error! (%d) %s line:%d\n", result, FMOD_ErrorString(result), line);
+    throw Error();
+  }
+}
+
+inline void lose_check(FMOD_RESULT result, int line) {
+  if (result != FMOD_OK && result != FMOD_ERR_INVALID_HANDLE && result != FMOD_ERR_CHANNEL_STOLEN) {
+    printf("FMOD error! (%d) %s line:%d\n", result, FMOD_ErrorString(result), line);
     throw Error();
   }
 }
