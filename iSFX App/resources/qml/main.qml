@@ -5,11 +5,17 @@ Rectangle {
     id: container
     width: 1137
     height: 798
-    color: "#FFFFFF"
+    color: "#606060"
     
     signal updateSignal;
-    signal newSound (string s, variant obj);
+    signal newSound (variant o, int i);
     signal itemClicked (variant obj);
+    
+    function updateProgress(ms) {
+    for(var i=0;i<20; i++) {
+      soundcolumn1.model().setProperty(i, "progress", ms/2240)
+      }
+    }
     
     
     Timer {
@@ -56,12 +62,19 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        newSound.connect(soundcolumn1.newSound)
+        soundcolumn1.signalNewSound.connect(newSound)
         newSound.connect(soundcolumn2.newSound)
         newSound.connect(soundcolumn3.newSound)
         newSound.connect(soundcolumn4.newSound)
         newSound.connect(soundcolumn5.newSound)
         itemClicked.connect(soundcolumn1.itemClicked)
         timer.start();
+    }
+    
+    function addSound(c, i, k, s) {
+    console.log(c + " " + " " + i + " " + k + " " + s)
+      if (c === 1) {
+        soundcolumn1.addSound(i,k,s)
+      }
     }
 }
