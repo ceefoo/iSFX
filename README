@@ -4,15 +4,15 @@ project that aims to produce a soundboard application to be used in improv
 shows.
 
 Structure:
-/iSFX 													-- root folder
-	/FMOD 												-- FMOD headers, libs, and docs
-		/fmodex-documentation.chm 	-- FMOD Documentation
-		/inc 												-- FMOD Headers
-		/lib 												-- FMOD Libraries (subfolders for platforms)
-		/LICENSE.TXT 								-- FMOD License
-	/iSFX App 										-- A Soundboard application
-	/iSFX Lib 										-- A library extending FMOD's capabilities
-		/C 													-- Lib iSFX C
-		/C++ 												-- Lib iSFX C++
-		/Python 										-- Lib iSFX Python
-	/songs 											-- Free songs for testing purposes
+/iSFX                           -- root folder
+  /FMOD                         -- FMOD headers, libs, and docs
+    /fmodex-documentation.chm   -- FMOD Documentation
+    /inc                        -- FMOD Headers
+    /lib                        -- FMOD Libraries (subfolders for platforms)
+    /LICENSE.TXT                -- FMOD License
+  /iSFX App                     -- A Soundboard application
+  /iSFX Lib                     -- A library extending FMOD's capabilities
+    /C                          -- Lib iSFX C
+    /C++                        -- Lib iSFX C++
+    /Python                     -- Lib iSFX Python
+  /songs                        -- Free songs for testing purposes
