@@ -16,25 +16,16 @@ namespace iSFX {
     FMOD::System *system;
     FMOD_RESULT result;
     
-    boost::signals2::signal<void(unsigned int)> update;
+    boost::signals2::signal<void()> update;
     
     System() {
       checked(FMOD::System_Create(&system), __LINE__);
-      checked(system->init(32, FMOD_INIT_NORMAL, NULL), __LINE__);
+      checked(system->init(32, FMOD_INIT_NORMAL | FMOD_HARDWARE, NULL), __LINE__);
     }
     
     void Update() {
-      static boost::posix_time::ptime last (boost::posix_time::microsec_clock::local_time());
       system->update();
-      
-      boost::posix_time::ptime now (boost::posix_time::microsec_clock::local_time());
-      update((now-last).total_microseconds());
-      last = now;
-    }
-    
-    template<typename anything>
-    boost::signals2::connection Connect(anything a) {
-      return update.connect(a);
+      update();
     }
     
     operator FMOD::System* () {
